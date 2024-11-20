@@ -27,9 +27,7 @@ public class UserController {
     // 1. 모든 사용자 조회
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-    	System.out.println("herer????");
         List<User> users = userService.getAllUsers();
-        System.err.println(users);
         return ResponseEntity.ok(users);
     }
 
@@ -54,7 +52,7 @@ public class UserController {
         User updatedUser = userService.updateUser(user);
         return ResponseEntity.ok(updatedUser);
     }
-
+    
     // 5. 사용자 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
