@@ -1,0 +1,95 @@
+package com.minijean.healthmer.controller;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.minijean.healthmer.model.dto.HealthCategory;
+import com.minijean.healthmer.model.dto.Routine;
+import com.minijean.healthmer.model.dto.Timer;
+import com.minijean.healthmer.model.dto.TimerCategory;
+import com.minijean.healthmer.model.dto.TimerRequest;
+import com.minijean.healthmer.model.service.TimerService;
+
+@RestController
+@RequestMapping("/api/v1/timer")
+@CrossOrigin("http://localhost:5173")
+public class TimerController {
+	
+	private final TimerService timerService;
+	
+	public TimerController(TimerService timerService) {
+		this.timerService = timerService;
+	}
+	
+	@GetMapping("")
+	public ResponseEntity<?> listAll(){
+		List<Timer> list = timerService.getTimerList();
+		
+		if(list == null || list.size() == 0) {
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteTimer(@PathVariable("id") long id){
+		
+		System.out.println("id는" + id);
+		boolean isDeleted = timerService.removeTimer(id);
+		
+		if(isDeleted) {
+			return ResponseEntity.status(HttpStatus.OK).body("Timer deleted");
+		}
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail Delete");
+	}
+	
+	@GetMapping("/{id}/routine")
+	public ResponseEntity<?> listRoutine(@PathVariable("id") long id){
+		List<Routine> list = timerService.getRoutineList(id);
+		
+		if(list == null || list.size() == 0) {
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
+	
+	@GetMapping("/category")
+	public ResponseEntity<?> listCategory(){
+		List<HealthCategory> list = timerService.getHealthCategoryList();
+		
+		if(list == null || list.size() == 0) {
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}/category")
+	public ResponseEntity<?> listCategory(@PathVariable("id") long id){
+		List<TimerCategory> list = timerService.getCategoryList(id);
+		
+		if(list == null || list.size() == 0) {
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
+	
+	@PostMapping("/create")
+	public ResponseEntity<Timer> create(@RequestBody TimerRequest timerRequest){
+		
+		Timer createdTimer = timerService.createTimer(timerRequest);
+		
+		return new ResponseEntity<>(createdTimer, HttpStatus.CREATED);
+	}
+	
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minijean.healthmer.model.dao.TimerDao">
+
+	<select id="selectAll" resultType="Timer">
+		SELECT t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level, t.created_at, SUM(r.time) AS total_routine_time
+		FROM timer_info t
+		JOIN routine_info r ON r.timer_info_id = t.id
+		GROUP BY t.id;
+	</select>
+	
+	<select id="selectHealthCategory" resultType="HealthCategory">
+		SELECT id, name FROM health_category;
+	</select>
+	
+	<select id="selectAllCategory" resultType="TimerCategory" parameterType="long">
+		SELECT timer_info_id, health_category_id FROM timer_category WHERE timer_info_id = #{id};
+	</select>
+	
+	<select id="selectAllRoutine" resultType="Routine" parameterType="long">
+		SELECT id, timer_info_id, name, time, is_rest FROM routine_info WHERE timer_info_id = #{id};
+	</select>
+	
+	<insert id="insertTimer" parameterType="Timer" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO timer_info (user_id, title, level)
+	    VALUES (#{userId}, #{title}, #{level});
+	</insert>
+	
+	<insert id="insertTimerCategory" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+	    INSERT IGNORE INTO timer_category (timer_info_id, health_category_id)
+	    VALUES
+		<foreach collection="list" item="category" separator=",">
+			(#{category.timerInfoId}, #{category.healthCategoryId})
+		</foreach>
+	</insert>
+	
+	<insert id="insertRoutines" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO routine_info (timer_info_id, name, time, is_rest)
+	    VALUES
+		<foreach collection="list" item="routine" separator=",">
+        	(#{routine.timerInfoId}, #{routine.name}, #{routine.time}, #{routine.isRest})
+    	</foreach>
+	</insert>
+	
+	<!--<update id="updateTimer" parameterType="Timer">
+		UPDATE timer_info
+		SET title = #{title}, level = #{level}
+		WHERE id = #{id};
+	</update>
+	
+	<update id="updateRoutines" parameterType="java.util.list">
+		<foreach collection="list" item="routine">
+			UPDATE routine_info
+			SET name = #{routine.name}, time = #{routine.level}, is_rest = #{routine.isRest}
+			WHERE id = #{id};
+		</foreach>
+	</update>-->
+	
+	<delete id="deleteTimer" parameterType="long">
+		DELETE FROM timer_info
+		WHERE id = #{id};
+	</delete>
+	
+	<!--<update id="updateViewsCount" parameterType="long">
+		UPDATE timer_info
+		SET views_count = views_count+1
+		WHERE id = #{id};
+	</update>
+	
+	<update id="updateCompleteCount" parameterType="long">
+		UPDATE timer_info
+		SET complete_count = complete_count+1
+		WHERE id = #{id};
+	</update>-->
+	
+</mapper>
