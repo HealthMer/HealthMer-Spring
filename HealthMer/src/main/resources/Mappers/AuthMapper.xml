@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.minijean.healthmer.model.dao.AuthDao">
+
+    <!-- 이메일로 사용자 조회 -->
+    <select id="findByEmail" parameterType="String" resultType="User">
+        SELECT * FROM user WHERE email = #{email};
+    </select>
+
+    <!-- 사용자 ID로 사용자 조회 -->
+    <select id="findByUserId" parameterType="String" resultType="User">
+        SELECT * FROM user WHERE user_id = #{userId};
+    </select>
+    
+    <!-- 회원 최초 저장 email, password-->
+    <insert id="registUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (user_type_id, sign_up_route_id, password, email)
+        VALUES (#{userTypeId}, #{signUpRouteId}, #{password}, #{email});
+    </insert>
+</mapper>
