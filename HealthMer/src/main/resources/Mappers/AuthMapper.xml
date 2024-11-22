@@ -15,9 +15,41 @@
         SELECT * FROM user WHERE user_id = #{userId};
     </select>
     
+    <select id="findByNickname" parameterType="String" resultType="User">
+        SELECT * FROM user WHERE nickname = #{nickname};
+    </select>
+    
     <!-- 회원 최초 저장 email, password-->
-    <insert id="registUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+    <!-- <insert id="registUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user (user_type_id, sign_up_route_id, password, email)
         VALUES (#{userTypeId}, #{signUpRouteId}, #{password}, #{email});
+    </insert> -->
+    
+    <insert id="registUser" parameterType="com.minijean.healthmer.model.dto.User">
+    INSERT INTO `user` (
+        `user_type_id`,
+        `sign_up_route_id`,
+        `user_id`,
+        `password`,
+        `email`,
+        `nickname`,
+        `age`,
+        `gender_id`,
+        `created_at`
+    ) VALUES (
+        #{userTypeId},
+        #{signUpRouteId},
+        #{userId},
+        #{password},
+        #{email},
+        #{nickname},
+        #{age},
+        #{genderId},
+        CURRENT_TIMESTAMP
+    );
     </insert>
+    
+    
+    
+    
 </mapper>

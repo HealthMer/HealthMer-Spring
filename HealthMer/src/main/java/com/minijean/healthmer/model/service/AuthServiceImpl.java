@@ -32,7 +32,6 @@ public class AuthServiceImpl implements AuthService {
 		} else {
 			// 중복 되지 않았을 때.
 			user = new User();
-			System.out.println("here");
 			user.setUserTypeId((byte) 2); // 기본 user
 			user.setSignUpRouteId((byte) 5); // email 가입 루트
 			user.setEmail(email);
@@ -48,6 +47,29 @@ public class AuthServiceImpl implements AuthService {
 				return true;
 			}
 		}
+	}
+
+	@Override
+	public boolean register(User user) {
+		User findUserForEmail = authDao.findByEmail(user.getEmail());
+		User findUserForNickname = authDao.findByNickname(user.getNickname());
+		
+		if (findUserForEmail == null && findUserForNickname == null) {
+			user.setUserTypeId((byte) 2);
+			user.setSignUpRouteId((byte) 5);
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
+			
+			authDao.registUser(user);
+			
+			User data = authDao.findByEmail(user.getEmail());
+			
+			if (data == null) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@Override

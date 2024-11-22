@@ -7,11 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.minijean.healthmer.model.dto.User;
 import com.minijean.healthmer.model.service.AuthService;
 import com.minijean.healthmer.util.JwtUtil;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@CrossOrigin("http://localhost:5173")
 public class AuthController {
 
 //    @Autowired
@@ -24,10 +26,32 @@ public class AuthController {
 	}
 
 	// 회원가입
+//	@PostMapping("/register/email")
+//	public ResponseEntity<?> register(@RequestParam String email, @RequestParam String password) {
+//		try {
+//			boolean isRegist = authService.register(email, password);
+//			if (isRegist) {
+//				return ResponseEntity
+//						// 201 Created
+//						.status(HttpStatus.CREATED).body(Map.of("message", "User registered successfully"));
+//			} else {
+//				return ResponseEntity
+//						// 400 Bad Request
+//						.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Email already exists"));
+//			}
+//		} catch (Exception e) {
+//			return ResponseEntity
+//					// 500 Internal Server Error
+//					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//					.body(Map.of("message", "Registration failed due to server error"));
+//		}
+//	}
+	
 	@PostMapping("/register/email")
-	public ResponseEntity<?> register(@RequestParam String email, @RequestParam String password) {
+	public ResponseEntity<?> register(@RequestBody User user) {
 		try {
-			boolean isRegist = authService.register(email, password);
+//			boolean isRegist = authService.register(email, password);
+			boolean isRegist = authService.register(user);
 			if (isRegist) {
 				return ResponseEntity
 						// 201 Created
@@ -41,10 +65,10 @@ public class AuthController {
 			return ResponseEntity
 					// 500 Internal Server Error
 					.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(Map.of("message", "Registration failed due to server error"));
+					.body(Map.of("message", "Registr ation failed due to server error"));
 		}
 	}
-
+	
 	// 로그인
 	@PostMapping("/login/email")
 	public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
@@ -60,7 +84,7 @@ public class AuthController {
 		} else {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-
+		
 		return new ResponseEntity<>(result, status);
 	}
 

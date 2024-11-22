@@ -1,5 +1,7 @@
 package com.minijean.healthmer.model.service;
 
+import com.minijean.healthmer.model.dto.User;
+
 public interface AuthService {
 
     /**
@@ -9,6 +11,8 @@ public interface AuthService {
      * @return 회원가입 성공 여부
      */
 	boolean register(String email, String password);
+	
+	boolean register(User user);
 	
     /**
      * 사용자 로그인
