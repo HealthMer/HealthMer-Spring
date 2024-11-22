@@ -34,5 +34,4 @@ public class HealthCategory {
 	public String toString() {
 		return "HealthCategory [id=" + id + ", name=" + name + "]";
 	}
-	
 }
