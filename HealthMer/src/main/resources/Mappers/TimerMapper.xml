@@ -101,4 +101,18 @@
 		WHERE id = #{id};
 	</update>-->
 	
+	<select id="searchTimer" resultType="Timer" parameterType="SearchCondition">
+		SELECT t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level, t.created_at, SUM(r.time) AS total_routine_time
+		FROM timer_info t
+		JOIN routine_info r ON r.timer_info_id = t.id
+		<!-- 검색 조건 -->
+		<if test="key != ''">
+			WHERE t.${key} LIKE concat('%', #{word}, '%')
+		</if>
+		<if test="orderBy != ''">
+			ORDER BY ${orderBy} ${orderByDir}
+		</if>
+		GROUP BY t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level, t.created_at;
+	</select>
+	
 </mapper>

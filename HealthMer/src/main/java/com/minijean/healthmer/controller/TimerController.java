@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,6 +21,7 @@ import com.minijean.healthmer.model.dto.Timer;
 import com.minijean.healthmer.model.dto.TimerCategory;
 import com.minijean.healthmer.model.dto.TimerRequest;
 import com.minijean.healthmer.model.service.TimerService;
+import com.minijean.healthmer.model.dto.SearchCondition;
 
 @RestController
 @RequestMapping("/api/v1/timer")
@@ -42,10 +44,21 @@ public class TimerController {
 		return new ResponseEntity<>(list, HttpStatus.OK);
 	}
 	
+	@GetMapping("/search")
+	public ResponseEntity<?> search(@ModelAttribute SearchCondition condition){
+		System.out.println("안 된다");
+		System.out.println(condition.toString());
+		List<Timer> list = timerService.searchTimer(condition);
+		
+		if(list == null || list.size() == 0) {
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> oneTimer(@PathVariable("id") long id){
 		TimerRequest timerReq = timerService.getOneTimer(id);
-		
 		if(timerReq == null) {
 			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		}
@@ -54,6 +67,7 @@ public class TimerController {
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateOneTimer(@PathVariable("id") long id, @RequestBody TimerRequest timerRequest){
+		
 		TimerRequest updatedTimer = timerService.modifyOneTimer(id, timerRequest);
 		
 		if(updatedTimer == null) {

@@ -171,8 +171,7 @@ public class TimerServiceImpl implements TimerService {
 
 	@Override
 	public List<Timer> searchTimer(SearchCondition condition) {
-		// TODO Auto-generated method stub
-		return null;
+		return timerDao.searchTimer(condition);
 	}
 	
 
