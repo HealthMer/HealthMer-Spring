@@ -28,6 +28,80 @@ public class TimerServiceImpl implements TimerService {
 	}
 
 	@Override
+	public TimerRequest getOneTimer(long id) {
+		Timer timer = timerDao.selectOne(id);
+		List<Routine> routines = timerDao.selectAllRoutine(id);
+		List<TimerCategory> timerCategories = timerDao.selectAllCategory(id);
+		
+		TimerRequest timerRequest = new TimerRequest(timer, routines, timerCategories);
+		return timerRequest;
+	}
+	
+	@Override
+	@Transactional
+	public TimerRequest modifyOneTimer(long id, TimerRequest timerRequest) {
+		
+		Timer timer = timerRequest.getTimer();
+		List<Routine> routines = timerRequest.getRoutines();
+		List<TimerCategory> timerCategories = timerRequest.getTimerCategories();
+		
+		//타이머 수정
+		if(timer == null) {
+			throw new IllegalArgumentException("타이머가 존재하지 않습니다.");
+		}
+		
+		Timer dbTimer = timerDao.selectOne(id);
+		
+		dbTimer.setTitle(timer.getTitle());
+		dbTimer.setLevel(timer.getLevel());
+		timerDao.updateTimer(dbTimer);
+		
+		//루틴 수정
+		if(routines == null || routines.isEmpty()) {
+			throw new IllegalArgumentException("루틴은 하나 이상 등록돼야 합니다.");
+		}
+		
+		List<Routine> dbRoutines = timerDao.selectAllRoutine(id);
+		
+		for(Routine dbRoutine : dbRoutines) {//삭제
+			boolean isFind = false;
+			for(Routine routine : routines) {
+				if(dbRoutine.getId() == routine.getId()) {
+					isFind = true;
+					break;
+				}
+			}
+			if(!isFind) {
+				timerDao.deleteRoutine(dbRoutine.getId());				
+			}
+		}
+		
+		for(Routine routine : routines) {//수정/등록
+			boolean isFind = false;
+			for(Routine dbRoutine : dbRoutines) {
+				if(routine.getId() == dbRoutine.getId()) {
+					isFind = true;
+					timerDao.updateRoutine(routine);
+					break;
+				}
+			}
+			if(!isFind) {
+				timerDao.insertRoutine(routine);
+			}
+		}
+		
+		//카테고리 수정
+		if(timerCategories == null || timerCategories.isEmpty()) {
+			throw new IllegalArgumentException("카테고리는 하나 이상 등록돼야 합니다.");
+		}
+		
+		timerDao.deleteAllCategory(id);
+		timerDao.insertTimerCategory(timerCategories);
+		
+		return timerRequest;
+	}
+	
+	@Override
 	public List<HealthCategory> getHealthCategoryList(){
 		return timerDao.selectHealthCategory();
 	}
@@ -76,15 +150,23 @@ public class TimerServiceImpl implements TimerService {
 	}
 
 	@Override
+	@Transactional
 	public boolean removeTimer(long id) {
 		int result = timerDao.deleteTimer(id);
 		return result == 1;
 	}
 
+
 	@Override
-	public int modifyTimerWithRoutines(TimerRequest timerRequest) {
+	public boolean removeCategoryList(long id) {
 		// TODO Auto-generated method stub
-		return 0;
+		return false;
+	}
+
+	@Override
+	public boolean removeRoutineList(long id) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
@@ -92,6 +174,7 @@ public class TimerServiceImpl implements TimerService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 	
 

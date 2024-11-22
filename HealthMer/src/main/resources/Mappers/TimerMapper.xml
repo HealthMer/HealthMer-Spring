@@ -11,6 +11,14 @@
 		GROUP BY t.id;
 	</select>
 	
+	<select id="selectOne" resultType="Timer" parameterType="long">
+		SELECT t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level, t.created_at, SUM(r.time) AS total_routine_time
+		FROM timer_info t
+		JOIN routine_info r ON r.timer_info_id = t.id
+		WHERE t.id = #{id}
+		GROUP BY t.id;
+	</select>
+	
 	<select id="selectHealthCategory" resultType="HealthCategory">
 		SELECT id, name FROM health_category;
 	</select>
@@ -44,23 +52,41 @@
     	</foreach>
 	</insert>
 	
-	<!--<update id="updateTimer" parameterType="Timer">
+	<insert id="insertRoutine" parameterType="Routine" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO routine_info (timer_info_id, name, time, is_rest)
+	    VALUES (#{timerInfoId}, #{name}, #{time}, #{isRest});
+	</insert>
+	
+	<update id="updateTimer" parameterType="Timer">
 		UPDATE timer_info
 		SET title = #{title}, level = #{level}
 		WHERE id = #{id};
 	</update>
 	
-	<update id="updateRoutines" parameterType="java.util.list">
-		<foreach collection="list" item="routine">
-			UPDATE routine_info
-			SET name = #{routine.name}, time = #{routine.level}, is_rest = #{routine.isRest}
-			WHERE id = #{id};
-		</foreach>
-	</update>-->
+	<update id="updateRoutine" parameterType="Routine">
+		UPDATE routine_info
+		SET name = #{name}, time = #{time}, is_rest = #{isRest}
+		WHERE id = #{id};
+	</update>
 	
 	<delete id="deleteTimer" parameterType="long">
 		DELETE FROM timer_info
 		WHERE id = #{id};
+	</delete>
+	
+	<delete id="deleteRoutine" parameterType="long">
+		DELETE FROM routine_info
+		WHERE id = #{id};
+	</delete>
+	
+	<delete id="deleteAllRoutine" parameterType="long">
+		DELETE FROM routine_info
+		WHERE timer_info_id = #{id};
+	</delete>
+	
+	<delete id="deleteAllCategory" parameterType="long">
+		DELETE FROM timer_category
+		WHERE timer_info_id = #{id};
 	</delete>
 	
 	<!--<update id="updateViewsCount" parameterType="long">

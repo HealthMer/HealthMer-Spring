@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,10 +42,29 @@ public class TimerController {
 		return new ResponseEntity<>(list, HttpStatus.OK);
 	}
 	
+	@GetMapping("/{id}")
+	public ResponseEntity<?> oneTimer(@PathVariable("id") long id){
+		TimerRequest timerReq = timerService.getOneTimer(id);
+		
+		if(timerReq == null) {
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(timerReq, HttpStatus.OK);
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updateOneTimer(@PathVariable("id") long id, @RequestBody TimerRequest timerRequest){
+		TimerRequest updatedTimer = timerService.modifyOneTimer(id, timerRequest);
+		
+		if(updatedTimer == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 입력입니다.");
+		}
+		
+		return ResponseEntity.ok(updatedTimer);
+	}
+	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteTimer(@PathVariable("id") long id){
-		
-		System.out.println("id는" + id);
 		boolean isDeleted = timerService.removeTimer(id);
 		
 		if(isDeleted) {
