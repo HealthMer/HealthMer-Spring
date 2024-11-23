@@ -24,33 +24,10 @@ public class AuthController {
 		this.authService = authService;
 		this.jwtUtil = jwtUtil;
 	}
-
-	// 회원가입
-//	@PostMapping("/register/email")
-//	public ResponseEntity<?> register(@RequestParam String email, @RequestParam String password) {
-//		try {
-//			boolean isRegist = authService.register(email, password);
-//			if (isRegist) {
-//				return ResponseEntity
-//						// 201 Created
-//						.status(HttpStatus.CREATED).body(Map.of("message", "User registered successfully"));
-//			} else {
-//				return ResponseEntity
-//						// 400 Bad Request
-//						.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Email already exists"));
-//			}
-//		} catch (Exception e) {
-//			return ResponseEntity
-//					// 500 Internal Server Error
-//					.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//					.body(Map.of("message", "Registration failed due to server error"));
-//		}
-//	}
 	
 	@PostMapping("/register/email")
 	public ResponseEntity<?> register(@RequestBody User user) {
 		try {
-//			boolean isRegist = authService.register(email, password);
 			boolean isRegist = authService.register(user);
 			if (isRegist) {
 				return ResponseEntity
@@ -71,11 +48,10 @@ public class AuthController {
 	
 	// 로그인
 	@PostMapping("/login/email")
-	public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
+	public ResponseEntity<?> login(@RequestBody User user) {
 		HttpStatus status = null;
 		Map<String, Object> result = new HashMap<>();
-		String loginUserToken = authService.login(email, password);
-		System.out.println(loginUserToken);
+		String loginUserToken = authService.login(user);
 		
 		if (loginUserToken != null) {
 			result.put("message", "Login Successfully");
@@ -92,7 +68,9 @@ public class AuthController {
 	@PostMapping("/logout")
 	public String logout() {
 		// front 처리 
-
 		return "User logged out successfully (Token removed on client side)";
 	}
+	
+	// 탈퇴 delete
+//	@PostMapping("/delete")
 }

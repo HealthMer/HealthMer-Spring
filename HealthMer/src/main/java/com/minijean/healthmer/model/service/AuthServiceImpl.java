@@ -23,33 +23,6 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	@Transactional
-	public boolean register(String email, String password) {
-		User user = authDao.findByEmail(email);
-		System.out.println("register user : " + user);
-
-		if (user != null) {
-			return false;
-		} else {
-			// 중복 되지 않았을 때.
-			user = new User();
-			user.setUserTypeId((byte) 2); // 기본 user
-			user.setSignUpRouteId((byte) 5); // email 가입 루트
-			user.setEmail(email);
-			user.setPassword(passwordEncoder.encode(password));
-
-			authDao.registUser(user);
-
-			User data = authDao.findByEmail(email);
-
-			if (data == null) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-	}
-
-	@Override
 	public boolean register(User user) {
 		User findUserForEmail = authDao.findByEmail(user.getEmail());
 		User findUserForNickname = authDao.findByNickname(user.getNickname());
@@ -73,12 +46,12 @@ public class AuthServiceImpl implements AuthService {
 	}
 	
 	@Override
-	public String login(String email, String password) {
-	    User user = authDao.findByEmail(email);
-        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+	public String login(User user) {
+	    User findedUser = authDao.findByEmail(user.getEmail());
+        if (user == null || !passwordEncoder.matches(user.getPassword(), findedUser.getPassword())) {
             throw new IllegalArgumentException("Invalid email or password");
         }
-        return jwtUtil.createToken(user.getEmail());
+        return jwtUtil.createToken(findedUser.getEmail());
 	}
 
 	@Override
