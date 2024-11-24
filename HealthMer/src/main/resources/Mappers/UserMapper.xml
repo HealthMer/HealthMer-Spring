@@ -16,4 +16,22 @@
 		SET `password` = #{newPassword}
 		WHERE `email` = #{email}
 	</update>
+	
+	<update id="changeNickname" parameterType="map">
+		UPDATE `user`
+		SET `nickname` = #{nickname}
+		WHERE `email` = #{email}
+	</update>
+
+	<update id="changeAge" parameterType="map">
+		UPDATE `user`
+		SET `age` = #{age}
+		WHERE `email` = #{email}
+	</update>
+
+	<update id="changeGender" parameterType="map">
+		UPDATE `user`
+		SET `gender_id` = #{genderId}
+		WHERE `email` = #{email}
+	</update>
 </mapper>

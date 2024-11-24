@@ -18,7 +18,7 @@ public interface UserService {
      * @param updatedUser 업데이트된 사용자 정보
      * @return 업데이트된 사용자 객체
      */
-    User updateProfile(User user);
+    boolean updateProfile(User user);
 
     /**
      * 사용자 정보를 조회합니다.
