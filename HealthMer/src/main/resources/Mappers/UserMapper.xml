@@ -4,17 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.minijean.healthmer.model.dao.UserDao">
-    <select id="findAll" resultType="User">
-        SELECT * FROM user
-    </select>
-    
-<!-- 
-    <select id="findById" parameterType="long" resultMap="UserResultMap">
-        SELECT * FROM user WHERE id = #{id}
-    </select>
-    
-    <insert id="insert" parameterType="User">
-        INSERT INTO user (user_type_id, sign_up_route_id, user_id, password, email, nickname, age, gender_id)
-        VALUES (#{userTypeId}, #{signUpRouteId}, #{userId}, #{password}, #{email}, #{nickname}, #{age}, #{genderId})
-    </insert> -->
+	<select id="findUser" parameterType="map" resultType="User">
+		SELECT *
+		FROM `user`
+		WHERE `email` = #{email}
+		AND `password` = #{newPassword}
+	</select>
+	
+	<update id="changePassword" parameterType="map">
+		UPDATE `user`
+		SET `password` = #{newPassword}
+		WHERE `email` = #{email}
+	</update>
 </mapper>

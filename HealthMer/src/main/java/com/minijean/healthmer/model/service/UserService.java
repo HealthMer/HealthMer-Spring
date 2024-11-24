@@ -1,43 +1,35 @@
 package com.minijean.healthmer.model.service;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
-import com.minijean.healthmer.model.dao.UserDao;
+import com.minijean.healthmer.model.dto.ChangePasswordRequest;
 import com.minijean.healthmer.model.dto.User;
 
-@Service
-public class UserService {
-	
-	private final UserDao userDao;
+public interface UserService {
 
-	public UserService(UserDao userDao) {
-		this.userDao = userDao;
-	}
-	
-	public List<User> getAllUsers() {
-		return userDao.findAll();
-	}
+    /**
+     * 비밀번호를 변경합니다.
+     * @param User 사용자 정보 
+     * @return 변경 성공 여부
+     */
+    boolean changePassword(ChangePasswordRequest changePasswordRequest);
 
-	public User getUserById(Long id) {
-		return null;
-//		return userMapper.findById(id);
-	}
+    /**
+     * 사용자 프로필을 업데이트합니다.
+     * @param User 사용자 정보 
+     * @param updatedUser 업데이트된 사용자 정보
+     * @return 업데이트된 사용자 객체
+     */
+    User updateProfile(User user);
 
-	public User createUser(User user) {
-		return null;
-//		userMapper.insert(user);
-//		return user;
-	}
-
-	public User updateUser(User user) {
-		return null;
-//		userMapper.update(user);
-//		return user;
-	}
-
-	public void deleteUser(Long id) {
-//		userMapper.delete(id);
-	}
+    /**
+     * 사용자 정보를 조회합니다.
+     * @param User 사용자 정
+     * @return 사용자 정보 객체
+     */
+    User getUserInfo(User user);
 }
+
+/*
+ *nickname
+ *age
+ *genderId
+ * */
