@@ -11,7 +11,9 @@ import com.minijean.healthmer.model.dto.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Component
@@ -31,14 +33,35 @@ public class JwtUtil {
 //				.claim("name", name).expiration(exp)
 //				.signWith(secretKey).compact();
 //	}
-
-	public Jws<Claims> validate(String token) {
-		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
-	}
-
-    public String extractUserId(String token) {
-    	// getBody() 메서드가 deprecated된 경우 대안은 라이브러리의 최신 문서를 참조하여 새로운 API로 업데이트된 방식에 맞게 코드를 작성하는 것입니다. 하지만, 현재의 최신 JJWT 라이브러리에서는 위의 방식이 유효하고 권장되는 패턴입니다.
-        Claims claims = validate(token).getBody(); // 클레임을 추출하는 권장되는 방법 사용
-        return claims.get("id", String.class); // "id" 클레임에서 사용자 ID 추출
+	
+	// SecretKey 생성
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(key);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    // JWT에서 사용자 ID 추출
+    public Long extractUserId(String token) {
+//    	System.out.println("here1");
+//    	System.out.println(token);
+//    	System.out.println(token.replace("Bearer ", "").trim());
+    	
+    	Jws<Claims> jwsClaims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token.replace("Bearer ", "").trim());
+//    	System.out.println(jwsClaims.getHeader());
+//    	System.out.println(jwsClaims.getPayload());
+//    	System.out.println(jwsClaims.getPayload().get("id", Long.class));
+    	
+    	return jwsClaims.getPayload().get("id", Long.class);
+    }
+    
+//    public static Claims validateToken(String token) {
+//        if (JwtBlacklist.isBlacklisted(token)) {
+//            throw new IllegalArgumentException("Token is blacklisted");
+//        }
+//
+//        return Jwts.parser()
+//                .setSigningKey(secretKey)
+//                .parseClaimsJws(token)
+//                .getBody();
+//    }
 }

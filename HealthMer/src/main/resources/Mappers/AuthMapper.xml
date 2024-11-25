@@ -19,12 +19,6 @@
         SELECT * FROM user WHERE nickname = #{nickname};
     </select>
     
-    <!-- 회원 최초 저장 email, password-->
-    <!-- <insert id="registUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user (user_type_id, sign_up_route_id, password, email)
-        VALUES (#{userTypeId}, #{signUpRouteId}, #{password}, #{email});
-    </insert> -->
-    
     <insert id="registUser" parameterType="com.minijean.healthmer.model.dto.User">
     INSERT INTO `user` (
         `user_type_id`,
@@ -48,8 +42,4 @@
         CURRENT_TIMESTAMP
     );
     </insert>
-    
-    
-    
-    
 </mapper>

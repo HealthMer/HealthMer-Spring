@@ -12,7 +12,7 @@ import com.minijean.healthmer.model.dto.TimerRequest;
 public interface TimerService {
 	
 	/** 전체 타이머 조회 */
-	public List<Timer> getTimerList();
+	public List<Timer> getTimerList(long userId);
 	
 	/** 타이머 한 개 조회 (카테고리와 하위 루틴도 함께 조회함) */
 	public TimerRequest getOneTimer(long id);

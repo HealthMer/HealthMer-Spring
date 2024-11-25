@@ -4,106 +4,124 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.minijean.healthmer.model.dao.TimerDao">
 
-	<select id="selectAll" resultType="Timer">
-		SELECT t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level, t.created_at, SUM(r.time) AS total_routine_time
+	<select id="selectAll" parameterType="long" resultType="Timer">
+		SELECT t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level,
+		t.created_at, SUM(r.time) AS total_routine_time
 		FROM timer_info t
 		JOIN routine_info r ON r.timer_info_id = t.id
-		GROUP BY t.id;
+		WHERE t.user_id = #{userId}
+		GROUP BY t.id, t.user_id, t.title, t.views_count, t.complete_count,
+		t.level, t.created_at;
 	</select>
-	
+
 	<select id="selectOne" resultType="Timer" parameterType="long">
-		SELECT t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level, t.created_at, SUM(r.time) AS total_routine_time
+		SELECT
+		t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level,
+		t.created_at, SUM(r.time) AS total_routine_time
 		FROM timer_info t
-		JOIN routine_info r ON r.timer_info_id = t.id
+		JOIN
+		routine_info r ON r.timer_info_id = t.id
 		WHERE t.id = #{id}
-		GROUP BY t.id;
+		GROUP BY
+		t.id;
 	</select>
-	
+
 	<select id="selectHealthCategory" resultType="HealthCategory">
-		SELECT id, name FROM health_category;
+		SELECT id, name
+		FROM health_category;
 	</select>
-	
-	<select id="selectAllCategory" resultType="TimerCategory" parameterType="long">
-		SELECT timer_info_id, health_category_id FROM timer_category WHERE timer_info_id = #{id};
+
+	<select id="selectAllCategory" resultType="TimerCategory"
+		parameterType="long">
+		SELECT timer_info_id, health_category_id FROM
+		timer_category WHERE timer_info_id = #{id};
 	</select>
-	
-	<select id="selectAllRoutine" resultType="Routine" parameterType="long">
-		SELECT id, timer_info_id, name, time, is_rest FROM routine_info WHERE timer_info_id = #{id};
+
+	<select id="selectAllRoutine" resultType="Routine"
+		parameterType="long">
+		SELECT id, timer_info_id, name, time, is_rest FROM
+		routine_info WHERE timer_info_id = #{id};
 	</select>
-	
-	<insert id="insertTimer" parameterType="Timer" useGeneratedKeys="true" keyProperty="id">
-	    INSERT INTO timer_info (user_id, title, level)
-	    VALUES (#{userId}, #{title}, #{level});
+
+	<insert id="insertTimer" parameterType="Timer"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO timer_info (user_id, title, level)
+		VALUES (#{userId}, #{title}, #{level});
 	</insert>
-	
-	<insert id="insertTimerCategory" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-	    INSERT IGNORE INTO timer_category (timer_info_id, health_category_id)
-	    VALUES
+
+	<insert id="insertTimerCategory" parameterType="java.util.List"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT IGNORE INTO timer_category (timer_info_id, health_category_id)
+		VALUES
 		<foreach collection="list" item="category" separator=",">
 			(#{category.timerInfoId}, #{category.healthCategoryId})
 		</foreach>
 	</insert>
-	
-	<insert id="insertRoutines" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-	    INSERT INTO routine_info (timer_info_id, name, time, is_rest)
-	    VALUES
+
+	<insert id="insertRoutines" parameterType="java.util.List"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO routine_info (timer_info_id, name, time, is_rest)
+		VALUES
 		<foreach collection="list" item="routine" separator=",">
-        	(#{routine.timerInfoId}, #{routine.name}, #{routine.time}, #{routine.isRest})
-    	</foreach>
+			(#{routine.timerInfoId}, #{routine.name}, #{routine.time},
+			#{routine.isRest})
+		</foreach>
 	</insert>
-	
-	<insert id="insertRoutine" parameterType="Routine" useGeneratedKeys="true" keyProperty="id">
-	    INSERT INTO routine_info (timer_info_id, name, time, is_rest)
-	    VALUES (#{timerInfoId}, #{name}, #{time}, #{isRest});
+
+	<insert id="insertRoutine" parameterType="Routine"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO routine_info (timer_info_id, name, time, is_rest)
+		VALUES (#{timerInfoId}, #{name}, #{time}, #{isRest});
 	</insert>
-	
+
 	<update id="updateTimer" parameterType="Timer">
 		UPDATE timer_info
-		SET title = #{title}, level = #{level}
+		SET
+		title = #{title}, level = #{level}
 		WHERE id = #{id};
 	</update>
-	
+
 	<update id="updateRoutine" parameterType="Routine">
 		UPDATE routine_info
-		SET name = #{name}, time = #{time}, is_rest = #{isRest}
+		SET
+		name = #{name}, time = #{time}, is_rest = #{isRest}
 		WHERE id = #{id};
 	</update>
-	
+
 	<delete id="deleteTimer" parameterType="long">
 		DELETE FROM timer_info
 		WHERE id = #{id};
 	</delete>
-	
+
 	<delete id="deleteRoutine" parameterType="long">
-		DELETE FROM routine_info
+		DELETE FROM
+		routine_info
 		WHERE id = #{id};
 	</delete>
-	
+
 	<delete id="deleteAllRoutine" parameterType="long">
-		DELETE FROM routine_info
+		DELETE FROM
+		routine_info
 		WHERE timer_info_id = #{id};
 	</delete>
-	
+
 	<delete id="deleteAllCategory" parameterType="long">
-		DELETE FROM timer_category
+		DELETE FROM
+		timer_category
 		WHERE timer_info_id = #{id};
 	</delete>
-	
-	<!--<update id="updateViewsCount" parameterType="long">
-		UPDATE timer_info
-		SET views_count = views_count+1
-		WHERE id = #{id};
-	</update>
-	
-	<update id="updateCompleteCount" parameterType="long">
-		UPDATE timer_info
-		SET complete_count = complete_count+1
-		WHERE id = #{id};
-	</update>-->
-	
-	<select id="searchTimer" resultType="Timer" parameterType="SearchCondition">
-		SELECT t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level, t.created_at, SUM(r.time) AS total_routine_time
-		FROM timer_info t
+
+	<!--<update id="updateViewsCount" parameterType="long"> UPDATE timer_info 
+		SET views_count = views_count+1 WHERE id = #{id}; </update> <update id="updateCompleteCount" 
+		parameterType="long"> UPDATE timer_info SET complete_count = complete_count+1 
+		WHERE id = #{id}; </update> -->
+
+	<select id="searchTimer" resultType="Timer"
+		parameterType="SearchCondition">
+		SELECT t.id, t.user_id, t.title, t.views_count, t.complete_count,
+		t.level, t.created_at, SUM(r.time) AS total_routine_time
+		FROM
+		timer_info t
 		JOIN routine_info r ON r.timer_info_id = t.id
 		<!-- 검색 조건 -->
 		<if test="key != ''">
@@ -112,7 +130,8 @@
 		<if test="orderBy != ''">
 			ORDER BY ${orderBy} ${orderByDir}
 		</if>
-		GROUP BY t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level, t.created_at;
+		GROUP BY t.id, t.user_id, t.title, t.views_count, t.complete_count,
+		t.level, t.created_at;
 	</select>
-	
+
 </mapper>

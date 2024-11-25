@@ -11,7 +11,7 @@ import com.minijean.healthmer.model.dto.TimerCategory;
 public interface TimerDao {
 	
 	/** 전체 타이머 조회 */
-	public List<Timer> selectAll();
+	public List<Timer> selectAll(long userId);
 	
 	/** 타이머 한 개 조회 */
 	public Timer selectOne(long id);
