@@ -47,21 +47,48 @@ public class AuthController {
 	}
 	
 	// 로그인
+//	@PostMapping("/login/email")
+//	public ResponseEntity<?> login(@RequestBody User user) {
+//		HttpStatus status = null;
+//		Map<String, Object> result = new HashMap<>();
+//		String loginUserToken = authService.login(user);
+//		
+//		if (loginUserToken != null) {
+//			result.put("message", "Login Successfully");
+//			result.put("access-token", jwtUtil.createToken(loginUserToken));
+//			status = HttpStatus.ACCEPTED;
+//		} else {
+//			status = HttpStatus.INTERNAL_SERVER_ERROR;
+//		}
+//		
+//		ResponseEntity<?> entity = new ResponseEntity<>(result, status);
+//		return new ResponseEntity<>(result, status);
+//	}
+	
 	@PostMapping("/login/email")
 	public ResponseEntity<?> login(@RequestBody User user) {
-		HttpStatus status = null;
-		Map<String, Object> result = new HashMap<>();
-		String loginUserToken = authService.login(user);
-		
-		if (loginUserToken != null) {
-			result.put("message", "Login Successfully");
-			result.put("access-token", jwtUtil.createToken(loginUserToken));
-			status = HttpStatus.ACCEPTED;
-		} else {
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		
-		return new ResponseEntity<>(result, status);
+	    HttpStatus status;
+	    Map<String, Object> result = new HashMap<>();
+	    String loginUserToken = authService.login(user);
+	    if (loginUserToken != null) {
+	        // 로그인 성공 시 메시지와 토큰 추가
+	        String token = jwtUtil.createToken(loginUserToken);
+	        result.put("message", "Login Successfully");
+	        result.put("access-token", token);
+	        status = HttpStatus.ACCEPTED;
+
+	        // ResponseEntity에 헤더 추가
+	        return ResponseEntity.status(status)
+	                             .header("Authorization", "Bearer " + token)
+	                             .body(result);
+	    } else {
+	        // 로그인 실패 시 처리
+	        result.put("message", "Login Failed");
+	        status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+	        return ResponseEntity.status(status)
+	                             .body(result);
+	    }
 	}
 
 	// 로그아웃 (클라이언트 측에서 JWT 삭제)
