@@ -25,7 +25,6 @@ import com.minijean.healthmer.model.dto.SearchCondition;
 
 @RestController
 @RequestMapping("/api/v1/timer")
-@CrossOrigin("http://localhost:5173")
 public class TimerController {
 	
 	private final TimerService timerService;

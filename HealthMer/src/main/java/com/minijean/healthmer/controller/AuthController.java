@@ -13,16 +13,13 @@ import com.minijean.healthmer.util.JwtUtil;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin("http://localhost:5173")
 public class AuthController {
 
 //    @Autowired
 	private final AuthService authService;
-	private final JwtUtil jwtUtil;
 
-	public AuthController(AuthService authService, JwtUtil jwtUtil) {
+	public AuthController(AuthService authService) {
 		this.authService = authService;
-		this.jwtUtil = jwtUtil;
 	}
 	
 	@PostMapping("/register/email")
@@ -47,24 +44,6 @@ public class AuthController {
 	}
 	
 	// 로그인
-//	@PostMapping("/login/email")
-//	public ResponseEntity<?> login(@RequestBody User user) {
-//		HttpStatus status = null;
-//		Map<String, Object> result = new HashMap<>();
-//		String loginUserToken = authService.login(user);
-//		
-//		if (loginUserToken != null) {
-//			result.put("message", "Login Successfully");
-//			result.put("access-token", jwtUtil.createToken(loginUserToken));
-//			status = HttpStatus.ACCEPTED;
-//		} else {
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//		}
-//		
-//		ResponseEntity<?> entity = new ResponseEntity<>(result, status);
-//		return new ResponseEntity<>(result, status);
-//	}
-	
 	@PostMapping("/login/email")
 	public ResponseEntity<?> login(@RequestBody User user) {
 	    HttpStatus status;
@@ -72,14 +51,13 @@ public class AuthController {
 	    String loginUserToken = authService.login(user);
 	    if (loginUserToken != null) {
 	        // 로그인 성공 시 메시지와 토큰 추가
-	        String token = jwtUtil.createToken(loginUserToken);
 	        result.put("message", "Login Successfully");
-	        result.put("access-token", token);
-	        status = HttpStatus.ACCEPTED;
+			result.put("access_token", loginUserToken);
 
+	        status = HttpStatus.ACCEPTED;
 	        // ResponseEntity에 헤더 추가
 	        return ResponseEntity.status(status)
-	                             .header("Authorization", "Bearer " + token)
+	                             .header("Authorization", "Bearer " + loginUserToken)
 	                             .body(result);
 	    } else {
 	        // 로그인 실패 시 처리

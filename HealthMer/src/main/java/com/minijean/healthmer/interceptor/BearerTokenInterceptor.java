@@ -23,7 +23,6 @@ public class BearerTokenInterceptor implements HandlerInterceptor {
 
         // Bearer 이후의 토큰 추출
         String token = authorizationHeader.substring(7);
-
         // 토큰 유효성 검사 (예: JWT 검증)
         if (!isValidToken(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
