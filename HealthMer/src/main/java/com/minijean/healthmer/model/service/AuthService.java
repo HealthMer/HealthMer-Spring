@@ -6,22 +6,18 @@ public interface AuthService {
 
     /**
      * 사용자 회원가입
-     * @param email 사용자 이메일
-     * @param password 사용자 비밀번호
+     * @param User user DTO
      * @return 회원가입 성공 여부
      */
-	boolean register(String email, String password);
-	
 	boolean register(User user);
 	
     /**
      * 사용자 로그인
-     * @param email 사용자 이메일
-     * @param password 사용자 비밀번호
+     * @param user 사용자 DTO
      * @return JWT 토큰
      * @throws IllegalArgumentException 로그인 실패 시 예외
      */
-    String login(String email, String password);
+	String login(User user);
 
     /**
      * 사용자 로그아웃
@@ -53,4 +49,5 @@ public interface AuthService {
      * @return 사용자의 이메일
      */
     String verifyUser(String token);
+
 }
