@@ -11,21 +11,21 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-    
-    // 인증 비활성화 
-	@Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable()) // CSRF 비활성화
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() // 모든 요청을 인증 없이 허용
-            );
 
-        return http.build();
-    }
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	// 인증 비활성화
+	@Bean
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http
+			.cors() // CORS 설정을 Spring Security에서도 허용
+			.and()
+			.csrf(csrf -> csrf.disable()) // CSRF 비활성화
+			.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+		return http.build();
+	}
 }
