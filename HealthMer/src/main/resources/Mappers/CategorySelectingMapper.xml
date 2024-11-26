@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.minijean.healthmer.model.dao.CategorySelectingDao">
+    <select id="selectTimersByUserIdAndCategory" parameterType="map" resultType="Timer">
+        SELECT ti.*
+        FROM timer_info ti
+        JOIN timer_category tc ON ti.id = tc.timer_info_id
+        JOIN health_category hc ON tc.health_category_id = hc.id
+        WHERE hc.id = #{categoryId} AND ti.user_id = #{userId}
+    </select>
+</mapper>
