@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(bearerTokenInterceptor)
                 .addPathPatterns("/api/v1/**") // 토큰 검증이 필요한 경로 설정
-                .excludePathPatterns("/api/v1/auth/login/email", "/api/v1/auth/register/email"); // 인증 관련 경로 제외 (로그인, 회원가입 등)
+                .excludePathPatterns("/api/v1/auth/login/email", "/api/v1/auth/register/email", "/api/v1/email/verify"); // 인증 관련 경로 제외 (로그인, 회원가입 등)
     }
     
     // CORS 전역 설정 
