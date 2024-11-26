@@ -5,10 +5,17 @@
         
 <mapper namespace="com.minijean.healthmer.model.dao.CategorySelectingDao">
     <select id="selectTimersByUserIdAndCategory" parameterType="map" resultType="Timer">
-        SELECT ti.*
-        FROM timer_info ti
-        JOIN timer_category tc ON ti.id = tc.timer_info_id
-        JOIN health_category hc ON tc.health_category_id = hc.id
-        WHERE hc.id = #{categoryId} AND ti.user_id = #{userId}
+        SELECT ti.*, 
+        COALESCE(tt.total_routine_time, 0) AS total_routine_time
+		FROM timer_info ti
+		JOIN timer_category tc ON ti.id = tc.timer_info_id
+		JOIN health_category hc ON tc.health_category_id = hc.id
+		LEFT JOIN (
+		    SELECT t.id, SUM(r.time) AS total_routine_time
+		    FROM timer_info t
+		    JOIN routine_info r ON r.timer_info_id = t.id
+		    GROUP BY t.id
+		) tt ON tt.id = ti.id
+		WHERE hc.id = #{categoryId} AND ti.user_id = #{userId};
     </select>
 </mapper>
