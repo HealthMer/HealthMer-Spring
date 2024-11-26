@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,7 +22,6 @@ import com.minijean.healthmer.model.dto.TimerCategory;
 import com.minijean.healthmer.model.dto.TimerRequest;
 import com.minijean.healthmer.model.service.TimerService;
 import com.minijean.healthmer.util.JwtUtil;
-import com.minijean.healthmer.model.dto.SearchCondition;
 
 @RestController
 @RequestMapping("/api/v1/timer")
@@ -35,7 +33,6 @@ public class TimerController {
 	public TimerController(TimerService timerService, JwtUtil jtwUtil) {
 		this.timerService = timerService;
 		this.jtwUtil = jtwUtil;
-
 	}
 
 	@GetMapping("")
@@ -48,17 +45,7 @@ public class TimerController {
 		return new ResponseEntity<>(list, HttpStatus.OK);
 	}
 
-	@GetMapping("/search")
-	public ResponseEntity<?> search(@ModelAttribute SearchCondition condition) {
-		System.out.println("안 된다");
-		System.out.println(condition.toString());
-		List<Timer> list = timerService.searchTimer(condition);
 
-		if (list == null || list.size() == 0) {
-			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-		}
-		return new ResponseEntity<>(list, HttpStatus.OK);
-	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> oneTimer(@PathVariable("id") long id) {
@@ -122,11 +109,14 @@ public class TimerController {
 	}
 
 	@PostMapping("/create")
-	public ResponseEntity<Timer> create(@RequestBody TimerRequest timerRequest) {
-
+	public ResponseEntity<Timer> create(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader, @RequestBody TimerRequest timerRequest) {
+		long userId = jtwUtil.extractUserId(authorizationHeader);
+		Timer timer = timerRequest.getTimer();
+		timer.setUserId(userId);
+		timerRequest.setTimer(timer);
+		
 		Timer createdTimer = timerService.createTimer(timerRequest);
 
 		return new ResponseEntity<>(createdTimer, HttpStatus.CREATED);
 	}
-
 }

@@ -15,15 +15,12 @@
 	</select>
 
 	<select id="selectOne" resultType="Timer" parameterType="long">
-		SELECT
-		t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level,
-		t.created_at, SUM(r.time) AS total_routine_time
+		SELECT t.id, t.user_id, t.title, t.views_count, t.complete_count, t.level, t.created_at, SUM(r.time) AS total_routine_time
 		FROM timer_info t
 		JOIN
 		routine_info r ON r.timer_info_id = t.id
 		WHERE t.id = #{id}
-		GROUP BY
-		t.id;
+		GROUP BY t.id;
 	</select>
 
 	<select id="selectHealthCategory" resultType="HealthCategory">
